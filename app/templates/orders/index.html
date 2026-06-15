@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block title %}Đơn hàng{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h4>🛒 Danh sách đơn hàng</h4>
+    <a href="{{ url_for('orders.create') }}" class="btn btn-primary">+ Tạo đơn hàng</a>
+</div>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th><th>Ngày tạo</th><th>Thao tác</th></tr>
+    </thead>
+    <tbody>
+        {% for o in orders %}
+        <tr>
+            <td>{{ o.order_code }}</td>
+            <td>{{ o.customer.name }}</td>
+            <td>{{ "{:,.0f}".format(o.total_amount) }} đ</td>
+            <td>
+                <span class="badge 
+                    {% if o.status == 'done' %}bg-success
+                    {% elif o.status == 'cancelled' %}bg-danger
+                    {% elif o.status == 'confirmed' %}bg-primary
+                    {% else %}bg-secondary{% endif %}">
+                    {{ o.status }}
+                </span>
+            </td>
+            <td>{{ o.created_at.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('orders.update_status', id=o.id) }}" style="display:inline">
+                    <select name="status" class="form-select form-select-sm d-inline w-auto">
+                        <option value="draft" {% if o.status=='draft' %}selected{% endif %}>Draft</option>
+                        <option value="confirmed" {% if o.status=='confirmed' %}selected{% endif %}>Confirmed</option>
+                        <option value="shipped" {% if o.status=='shipped' %}selected{% endif %}>Shipped</option>
+                        <option value="done" {% if o.status=='done' %}selected{% endif %}>Done</option>
+                        <option value="cancelled" {% if o.status=='cancelled' %}selected{% endif %}>Cancelled</option>
+                    </select>
+                    <button class="btn btn-sm btn-outline-primary">Cập nhật</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

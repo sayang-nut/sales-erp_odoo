@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Tạo đơn hàng{% endblock %}
+{% block content %}
+<h4 class="mb-4">➕ Tạo đơn hàng mới</h4>
+<form method="POST" class="col-md-8">
+    <div class="mb-3">
+        <label>Khách hàng</label>
+        <select name="customer_id" class="form-select" required>
+            <option value="">-- Chọn khách hàng --</option>
+            {% for c in customers %}
+            <option value="{{ c.id }}">{{ c.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label>Sản phẩm & Số lượng</label>
+        <div id="order-lines">
+            <div class="row g-2 mb-2">
+                <div class="col-8">
+                    <select name="product_id" class="form-select" required>
+                        <option value="">-- Chọn sản phẩm --</option>
+                        {% for p in products %}
+                        <option value="{{ p.id }}">{{ p.name }} ({{ "{:,.0f}".format(p.price) }} đ)</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-4">
+                    <input type="number" name="quantity" class="form-control" placeholder="Số lượng" value="1" min="1" required>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="addLine()">+ Thêm sản phẩm</button>
+    </div>
+    <button type="submit" class="btn btn-primary">Tạo đơn hàng</button>
+    <a href="{{ url_for('orders.index') }}" class="btn btn-secondary">Hủy</a>
+</form>
+<script>
+function addLine() {
+    const container = document.getElementById('order-lines');
+    const first = container.querySelector('.row');
+    const clone = first.cloneNode(true);
+    clone.querySelectorAll('input').forEach(i => i.value = '1');
+    clone.querySelectorAll('select').forEach(s => s.selectedIndex = 0);
+    container.appendChild(clone);
+}
+</script>
+{% endblock %}

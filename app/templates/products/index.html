@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block title %}Sản phẩm{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h4>📦 Danh sách sản phẩm</h4>
+    <a href="{{ url_for('products.create') }}" class="btn btn-primary">+ Thêm sản phẩm</a>
+</div>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr><th>SKU</th><th>Tên</th><th>Giá</th><th>Tồn kho</th><th>Danh mục</th><th>Thao tác</th></tr>
+    </thead>
+    <tbody>
+        {% for p in products %}
+        <tr>
+            <td>{{ p.sku }}</td>
+            <td>{{ p.name }}</td>
+            <td>{{ p.price }}</td>
+            <td>{{ p.stock }}</td>
+            <td>{{ p.category.name if p.category else '-' }}</td>
+            <td>
+                <a href="{{ url_for('products.edit', id=p.id) }}" class="btn btn-sm btn-warning">Sửa</a>
+                <form method="POST" action="{{ url_for('products.delete', id=p.id) }}" style="display:inline">
+                    <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa?')">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

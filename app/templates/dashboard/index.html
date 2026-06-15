@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h4 class="mb-4">📊 Dashboard</h4>
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <h5>Đơn hàng</h5>
+                <h2>{{ stats.total_orders }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <h5>Sản phẩm</h5>
+                <h2>{{ stats.total_products }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <h5>Khách hàng</h5>
+                <h2>{{ stats.total_customers }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+<h5>Đơn hàng gần đây</h5>
+<table class="table table-bordered">
+    <thead><tr><th>Mã đơn</th><th>Khách hàng</th><th>Tổng tiền</th><th>Trạng thái</th></tr></thead>
+    <tbody>
+        {% for order in stats.recent_orders %}
+        <tr>
+            <td>{{ order.order_code }}</td>
+            <td>{{ order.customer.name }}</td>
+            <td>{{ order.total_amount }}</td>
+            <td><span class="badge bg-secondary">{{ order.status }}</span></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
