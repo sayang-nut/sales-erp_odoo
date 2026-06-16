@@ -224,15 +224,3 @@ python-dotenv==1.0.0
 - Form validation
 - SQL Injection protection thông qua SQLAlchemy ORM
 
-## 📄 License
-
-MIT License
-
-## 👨‍💻 Author
-
-Tạo bởi TuongDev
-
----
-
-**Phiên bản**: 1.0.0  
-**Cập nhật lần cuối**: 2026-06-16
