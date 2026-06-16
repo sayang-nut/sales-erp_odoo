@@ -6,11 +6,14 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     order_code = db.Column(db.String(50), unique=True, nullable=False)
     customer_id = db.Column(db.Integer, db.ForeignKey('customers.id'), nullable=False)
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     status = db.Column(db.String(20), default='draft')
     total_amount = db.Column(db.Numeric(12, 2), default=0)
     note = db.Column(db.Text)
     created_at = db.Column(db.DateTime, server_default=db.func.now())
     updated_at = db.Column(db.DateTime, server_default=db.func.now(), onupdate=db.func.now())
+
+    creator = db.relationship('User', foreign_keys=[created_by], backref='created_orders')
 
     lines = db.relationship('OrderLine', backref='order', lazy=True, cascade='all, delete-orphan')
 

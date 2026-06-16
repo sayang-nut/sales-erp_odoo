@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_required
+from flask_login import current_user, login_required
 from app import db
 from app.models.order import Order, OrderLine
 from app.models.product import Product
@@ -30,6 +30,7 @@ def create():
         order = Order(
             order_code=generate_order_code(),
             customer_id=customer_id,
+            created_by=current_user.id,
             status='draft'
         )
         db.session.add(order)
@@ -60,6 +61,10 @@ def create():
 @orders_bp.route('/<int:id>/status', methods=['POST'])
 @login_required
 def update_status(id):
+    if current_user.role != 'admin':
+        flash('Bạn cần quyền admin để cập nhật trạng thái đơn hàng.', 'danger')
+        return redirect(url_for('orders.index'))
+
     order = Order.query.get_or_404(id)
     new_status = request.form['status']
     order.status = new_status

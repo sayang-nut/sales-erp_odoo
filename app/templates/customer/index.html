@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block title %}Khách hàng{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between mb-3">
+    <h4>👥 Danh sách khách hàng</h4>
+    <a href="{{ url_for('customers.create') }}" class="btn btn-primary">+ Thêm khách hàng</a>
+</div>
+<table class="table table-bordered table-hover">
+    <thead class="table-dark">
+        <tr>
+            <th>Tên khách hàng</th>
+            <th>Email</th>
+            <th>Điện thoại</th>
+            <th>Địa chỉ</th>
+            <th>Ngày tạo</th>
+            <th>Thao tác</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for c in customers %}
+        <tr>
+            <td>{{ c.name }}</td>
+            <td>{{ c.email if c.email else '-' }}</td>
+            <td>{{ c.phone if c.phone else '-' }}</td>
+            <td>{{ c.address if c.address else '-' }}</td>
+            <td>{{ c.created_at.strftime('%d/%m/%Y') }}</td>
+            <td>
+                <a href="{{ url_for('customers.edit', id=c.id) }}" class="btn btn-sm btn-warning">Sửa</a>
+                <form method="POST" action="{{ url_for('customers.delete', id=c.id) }}" style="display:inline">
+                    <button class="btn btn-sm btn-danger" onclick="return confirm('Xóa khách hàng này?')">Xóa</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

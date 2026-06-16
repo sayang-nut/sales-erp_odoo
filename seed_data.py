@@ -1,13 +1,30 @@
 from app import create_app, db
+from app.models.user import User
 from app.models.product import Product, Category
 from app.models.customer import Customer
 
 app = create_app()
 
 with app.app_context():
+    # --- Seed users ---
+    if not User.query.filter_by(username='admin').first():
+        admin = User(username='admin', email='admin@erp.local', role='admin')
+        admin.set_password('admin123')
+        db.session.add(admin)
+    else:
+        admin = User.query.filter_by(username='admin').first()
+
+    if not User.query.filter_by(username='staff').first():
+        staff = User(username='staff', email='staff@erp.local', role='staff')
+        staff.set_password('staff123')
+        db.session.add(staff)
+
+    db.session.commit()
+
     # Tránh tạo trùng nếu đã có data
     if Category.query.count() > 0:
-        print("⚠️  Đã có dữ liệu, bỏ qua seed.")
+        print("⚠️  Đã có dữ liệu, bỏ qua seed sản phẩm và khách hàng.")
+        print("✅ Seed user đã sẵn sàng!")
         exit()
 
     # --- Categories ---
@@ -29,6 +46,9 @@ with app.app_context():
         Product(name='Trà xanh Lipton', sku='FOOD-002', price=45000, stock=60, category_id=cat_food.id),
     ]
     db.session.add_all(products)
+    # Gán created_by sau khi đối tượng đã được tạo (tránh lỗi constructor nếu mapping chưa nhận thuộc tính)
+    for p in products:
+        p.created_by = admin.id
 
     # --- Customers ---
     customers = [
@@ -44,3 +64,4 @@ with app.app_context():
     print(f"   - {Category.query.count()} categories")
     print(f"   - {Product.query.count()} products")
     print(f"   - {Customer.query.count()} customers")
+    print("✅ Seed user đã sẵn sàng!")

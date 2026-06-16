@@ -1,9 +1,15 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request
-from flask_login import login_required
+from flask_login import current_user, login_required
 from app import db
 from app.models.product import Product, Category
 
 products_bp = Blueprint('products', __name__, url_prefix='/products')
+
+def admin_required():
+    if current_user.role != 'admin':
+        flash('Bạn cần quyền admin để thực hiện thao tác này.', 'danger')
+        return redirect(url_for('dashboard.index'))
+    return None
 
 @products_bp.route('/')
 @login_required
@@ -15,13 +21,17 @@ def index():
 @login_required
 def create():
     categories = Category.query.all()
+    if result := admin_required():
+        return result
+
     if request.method == 'POST':
         product = Product(
             name=request.form['name'],
             sku=request.form['sku'],
             price=request.form['price'],
             stock=request.form['stock'],
-            category_id=request.form.get('category_id') or None
+            category_id=request.form.get('category_id') or None,
+            created_by=current_user.id
         )
         db.session.add(product)
         db.session.commit()
@@ -32,6 +42,9 @@ def create():
 @products_bp.route('/<int:id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit(id):
+    if result := admin_required():
+        return result
+
     product = Product.query.get_or_404(id)
     categories = Category.query.all()
     if request.method == 'POST':
@@ -47,6 +60,9 @@ def edit(id):
 @products_bp.route('/<int:id>/delete', methods=['POST'])
 @login_required
 def delete(id):
+    if result := admin_required():
+        return result
+
     product = Product.query.get_or_404(id)
     product.is_active = False
     db.session.commit()
