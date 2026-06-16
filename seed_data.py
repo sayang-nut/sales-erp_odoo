@@ -23,8 +23,8 @@ with app.app_context():
 
     # Tránh tạo trùng nếu đã có data
     if Category.query.count() > 0:
-        print("⚠️  Đã có dữ liệu, bỏ qua seed sản phẩm và khách hàng.")
-        print("✅ Seed user đã sẵn sàng!")
+        print(" Đã có dữ liệu, bỏ qua seed sản phẩm và khách hàng.")
+        print(" Seed user đã sẵn sàng!")
         exit()
 
     # --- Categories ---
